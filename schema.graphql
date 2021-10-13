@@ -124,11 +124,15 @@ type User {
     skip: Int! = 0
   ): [Comment!]
   uploaded_commentCount(where: CommentWhereInput! = {}): Int
+  created_at: DateTime
 }
 
 type PasswordState {
   isSet: Boolean!
 }
+
+scalar DateTime
+  @specifiedBy(url: "https://datatracker.ietf.org/doc/html/rfc3339#section-5.6")
 
 input UserWhereUniqueInput {
   id: ID
@@ -150,6 +154,7 @@ input UserWhereInput {
   hearted_post: PostManyRelationFilter
   hearted_recipe: RecipeManyRelationFilter
   uploaded_comment: CommentManyRelationFilter
+  created_at: DateTimeNullableFilter
 }
 
 input IDFilter {
@@ -215,11 +220,23 @@ input CommentManyRelationFilter {
   none: CommentWhereInput
 }
 
+input DateTimeNullableFilter {
+  equals: DateTime
+  in: [DateTime!]
+  notIn: [DateTime!]
+  lt: DateTime
+  lte: DateTime
+  gt: DateTime
+  gte: DateTime
+  not: DateTimeNullableFilter
+}
+
 input UserOrderByInput {
   id: OrderDirection
   name: OrderDirection
   photo: OrderDirection
   email: OrderDirection
+  created_at: OrderDirection
 }
 
 enum OrderDirection {
@@ -239,6 +256,7 @@ input UserUpdateInput {
   hearted_post: PostRelateToManyForUpdateInput
   hearted_recipe: RecipeRelateToManyForUpdateInput
   uploaded_comment: CommentRelateToManyForUpdateInput
+  created_at: DateTime
 }
 
 input PostRelateToManyForUpdateInput {
@@ -292,6 +310,7 @@ input UserCreateInput {
   hearted_post: PostRelateToManyForCreateInput
   hearted_recipe: RecipeRelateToManyForCreateInput
   uploaded_comment: CommentRelateToManyForCreateInput
+  created_at: DateTime
 }
 
 input PostRelateToManyForCreateInput {
@@ -387,6 +406,7 @@ type Post {
   hearted_user: User
   linked_recipe: Recipe
   comment: Comment
+  created_at: DateTime
 }
 
 type Post_content_Document {
@@ -407,11 +427,13 @@ input PostWhereInput {
   hearted_user: UserWhereInput
   linked_recipe: RecipeWhereInput
   comment: CommentWhereInput
+  created_at: DateTimeNullableFilter
 }
 
 input PostOrderByInput {
   id: OrderDirection
   title: OrderDirection
+  created_at: OrderDirection
 }
 
 input PostUpdateInput {
@@ -421,6 +443,7 @@ input PostUpdateInput {
   hearted_user: UserRelateToOneForUpdateInput
   linked_recipe: RecipeRelateToOneForUpdateInput
   comment: CommentRelateToOneForUpdateInput
+  created_at: DateTime
 }
 
 input RecipeRelateToOneForUpdateInput {
@@ -447,6 +470,7 @@ input PostCreateInput {
   hearted_user: UserRelateToOneForCreateInput
   linked_recipe: RecipeRelateToOneForCreateInput
   comment: CommentRelateToOneForCreateInput
+  created_at: DateTime
 }
 
 input RecipeRelateToOneForCreateInput {
@@ -534,6 +558,7 @@ type Recipe {
     skip: Int! = 0
   ): [Post!]
   linked_postCount(where: PostWhereInput! = {}): Int
+  created_at: DateTime
 }
 
 input RecipeWhereUniqueInput {
@@ -554,6 +579,7 @@ input RecipeWhereInput {
   hearted_user: UserManyRelationFilter
   youtube: StringFilter
   linked_post: PostManyRelationFilter
+  created_at: DateTimeNullableFilter
 }
 
 input UserManyRelationFilter {
@@ -569,6 +595,7 @@ input RecipeOrderByInput {
   description: OrderDirection
   duration: OrderDirection
   youtube: OrderDirection
+  created_at: OrderDirection
 }
 
 input RecipeUpdateInput {
@@ -582,6 +609,7 @@ input RecipeUpdateInput {
   youtube: String
   ingredient: JSON
   linked_post: PostRelateToManyForUpdateInput
+  created_at: DateTime
 }
 
 input DifficultyRelateToOneForUpdateInput {
@@ -613,6 +641,7 @@ input RecipeCreateInput {
   youtube: String
   ingredient: JSON
   linked_post: PostRelateToManyForCreateInput
+  created_at: DateTime
 }
 
 input DifficultyRelateToOneForCreateInput {
@@ -630,6 +659,7 @@ type Comment {
   content: String
   author: User
   post: Post
+  created_at: DateTime
 }
 
 input CommentWhereUniqueInput {
@@ -644,17 +674,20 @@ input CommentWhereInput {
   content: StringFilter
   author: UserWhereInput
   post: PostWhereInput
+  created_at: DateTimeNullableFilter
 }
 
 input CommentOrderByInput {
   id: OrderDirection
   content: OrderDirection
+  created_at: OrderDirection
 }
 
 input CommentUpdateInput {
   content: String
   author: UserRelateToOneForUpdateInput
   post: PostRelateToOneForUpdateInput
+  created_at: DateTime
 }
 
 input PostRelateToOneForUpdateInput {
@@ -672,6 +705,7 @@ input CommentCreateInput {
   content: String
   author: UserRelateToOneForCreateInput
   post: PostRelateToOneForCreateInput
+  created_at: DateTime
 }
 
 input PostRelateToOneForCreateInput {

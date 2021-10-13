@@ -9,7 +9,6 @@ export const getCuratedPost = async (req: Request, res: Response) => {
                 name,
                 photo
             },
-            hearted_user,
             comment
         `
     });
