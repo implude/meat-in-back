@@ -42,6 +42,15 @@ type Mutation {
   updateDifficulties(data: [DifficultyUpdateArgs!]!): [Difficulty]
   deleteDifficulty(where: DifficultyWhereUniqueInput!): Difficulty
   deleteDifficulties(where: [DifficultyWhereUniqueInput!]!): [Difficulty]
+  createMeatType(data: MeatTypeCreateInput!): MeatType
+  createMeatTypes(data: [MeatTypeCreateInput!]!): [MeatType]
+  updateMeatType(
+    where: MeatTypeWhereUniqueInput!
+    data: MeatTypeUpdateInput!
+  ): MeatType
+  updateMeatTypes(data: [MeatTypeUpdateArgs!]!): [MeatType]
+  deleteMeatType(where: MeatTypeWhereUniqueInput!): MeatType
+  deleteMeatTypes(where: [MeatTypeWhereUniqueInput!]!): [MeatType]
   createRecipe(data: RecipeCreateInput!): Recipe
   createRecipes(data: [RecipeCreateInput!]!): [Recipe]
   updateRecipe(where: RecipeWhereUniqueInput!, data: RecipeUpdateInput!): Recipe
@@ -124,6 +133,8 @@ type User {
     skip: Int! = 0
   ): [Comment!]
   uploaded_commentCount(where: CommentWhereInput! = {}): Int
+  bookmarked_post: Post
+  bookmarked_recipe: Recipe
   created_at: DateTime
 }
 
@@ -154,6 +165,8 @@ input UserWhereInput {
   hearted_post: PostManyRelationFilter
   hearted_recipe: RecipeManyRelationFilter
   uploaded_comment: CommentManyRelationFilter
+  bookmarked_post: PostWhereInput
+  bookmarked_recipe: RecipeWhereInput
   created_at: DateTimeNullableFilter
 }
 
@@ -256,6 +269,8 @@ input UserUpdateInput {
   hearted_post: PostRelateToManyForUpdateInput
   hearted_recipe: RecipeRelateToManyForUpdateInput
   uploaded_comment: CommentRelateToManyForUpdateInput
+  bookmarked_post: PostRelateToOneForUpdateInput
+  bookmarked_recipe: RecipeRelateToOneForUpdateInput
   created_at: DateTime
 }
 
@@ -293,6 +308,18 @@ input CommentRelateToManyForUpdateInput {
   connect: [CommentWhereUniqueInput!]
 }
 
+input PostRelateToOneForUpdateInput {
+  create: PostCreateInput
+  connect: PostWhereUniqueInput
+  disconnect: Boolean
+}
+
+input RecipeRelateToOneForUpdateInput {
+  create: RecipeCreateInput
+  connect: RecipeWhereUniqueInput
+  disconnect: Boolean
+}
+
 input UserUpdateArgs {
   where: UserWhereUniqueInput!
   data: UserUpdateInput!
@@ -310,6 +337,8 @@ input UserCreateInput {
   hearted_post: PostRelateToManyForCreateInput
   hearted_recipe: RecipeRelateToManyForCreateInput
   uploaded_comment: CommentRelateToManyForCreateInput
+  bookmarked_post: PostRelateToOneForCreateInput
+  bookmarked_recipe: RecipeRelateToOneForCreateInput
   created_at: DateTime
 }
 
@@ -336,6 +365,16 @@ input BadgeRelateToManyForCreateInput {
 input CommentRelateToManyForCreateInput {
   create: [CommentCreateInput!]
   connect: [CommentWhereUniqueInput!]
+}
+
+input PostRelateToOneForCreateInput {
+  create: PostCreateInput
+  connect: PostWhereUniqueInput
+}
+
+input RecipeRelateToOneForCreateInput {
+  create: RecipeCreateInput
+  connect: RecipeWhereUniqueInput
 }
 
 type Badge {
@@ -412,6 +451,13 @@ type Post {
   ): [User!]
   hearted_userCount(where: UserWhereInput! = {}): Int
   linked_recipe: Recipe
+  bookmarked_user(
+    where: UserWhereInput! = {}
+    orderBy: [UserOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [User!]
+  bookmarked_userCount(where: UserWhereInput! = {}): Int
   comment(
     where: CommentWhereInput! = {}
     orderBy: [CommentOrderByInput!]! = []
@@ -439,6 +485,7 @@ input PostWhereInput {
   author: UserWhereInput
   hearted_user: UserManyRelationFilter
   linked_recipe: RecipeWhereInput
+  bookmarked_user: UserManyRelationFilter
   comment: CommentManyRelationFilter
   created_at: DateTimeNullableFilter
 }
@@ -462,6 +509,7 @@ input PostUpdateInput {
   author: UserRelateToOneForUpdateInput
   hearted_user: UserRelateToManyForUpdateInput
   linked_recipe: RecipeRelateToOneForUpdateInput
+  bookmarked_user: UserRelateToManyForUpdateInput
   comment: CommentRelateToManyForUpdateInput
   created_at: DateTime
 }
@@ -471,12 +519,6 @@ input UserRelateToManyForUpdateInput {
   set: [UserWhereUniqueInput!]
   create: [UserCreateInput!]
   connect: [UserWhereUniqueInput!]
-}
-
-input RecipeRelateToOneForUpdateInput {
-  create: RecipeCreateInput
-  connect: RecipeWhereUniqueInput
-  disconnect: Boolean
 }
 
 input PostUpdateArgs {
@@ -491,6 +533,7 @@ input PostCreateInput {
   author: UserRelateToOneForCreateInput
   hearted_user: UserRelateToManyForCreateInput
   linked_recipe: RecipeRelateToOneForCreateInput
+  bookmarked_user: UserRelateToManyForCreateInput
   comment: CommentRelateToManyForCreateInput
   created_at: DateTime
 }
@@ -498,11 +541,6 @@ input PostCreateInput {
 input UserRelateToManyForCreateInput {
   create: [UserCreateInput!]
   connect: [UserWhereUniqueInput!]
-}
-
-input RecipeRelateToOneForCreateInput {
-  create: RecipeCreateInput
-  connect: RecipeWhereUniqueInput
 }
 
 type Difficulty {
@@ -556,6 +594,41 @@ input DifficultyCreateInput {
   numeric_level: Int
 }
 
+type MeatType {
+  id: ID!
+  label: String
+}
+
+input MeatTypeWhereUniqueInput {
+  id: ID
+}
+
+input MeatTypeWhereInput {
+  AND: [MeatTypeWhereInput!]
+  OR: [MeatTypeWhereInput!]
+  NOT: [MeatTypeWhereInput!]
+  id: IDFilter
+  label: StringFilter
+}
+
+input MeatTypeOrderByInput {
+  id: OrderDirection
+  label: OrderDirection
+}
+
+input MeatTypeUpdateInput {
+  label: String
+}
+
+input MeatTypeUpdateArgs {
+  where: MeatTypeWhereUniqueInput!
+  data: MeatTypeUpdateInput!
+}
+
+input MeatTypeCreateInput {
+  label: String
+}
+
 type Recipe {
   id: ID!
   thumbnail: String
@@ -581,6 +654,15 @@ type Recipe {
   ): [Post!]
   linked_postCount(where: PostWhereInput! = {}): Int
   created_at: DateTime
+  meat_type: MeatType
+  bookmarked_user(
+    where: UserWhereInput! = {}
+    orderBy: [UserOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [User!]
+  bookmarked_userCount(where: UserWhereInput! = {}): Int
+  steps: JSON
 }
 
 input RecipeWhereUniqueInput {
@@ -602,6 +684,8 @@ input RecipeWhereInput {
   youtube: StringFilter
   linked_post: PostManyRelationFilter
   created_at: DateTimeNullableFilter
+  meat_type: MeatTypeWhereInput
+  bookmarked_user: UserManyRelationFilter
 }
 
 input RecipeOrderByInput {
@@ -626,11 +710,20 @@ input RecipeUpdateInput {
   ingredient: JSON
   linked_post: PostRelateToManyForUpdateInput
   created_at: DateTime
+  meat_type: MeatTypeRelateToOneForUpdateInput
+  bookmarked_user: UserRelateToManyForUpdateInput
+  steps: JSON
 }
 
 input DifficultyRelateToOneForUpdateInput {
   create: DifficultyCreateInput
   connect: DifficultyWhereUniqueInput
+  disconnect: Boolean
+}
+
+input MeatTypeRelateToOneForUpdateInput {
+  create: MeatTypeCreateInput
+  connect: MeatTypeWhereUniqueInput
   disconnect: Boolean
 }
 
@@ -651,11 +744,19 @@ input RecipeCreateInput {
   ingredient: JSON
   linked_post: PostRelateToManyForCreateInput
   created_at: DateTime
+  meat_type: MeatTypeRelateToOneForCreateInput
+  bookmarked_user: UserRelateToManyForCreateInput
+  steps: JSON
 }
 
 input DifficultyRelateToOneForCreateInput {
   create: DifficultyCreateInput
   connect: DifficultyWhereUniqueInput
+}
+
+input MeatTypeRelateToOneForCreateInput {
+  create: MeatTypeCreateInput
+  connect: MeatTypeWhereUniqueInput
 }
 
 type Comment {
@@ -694,12 +795,6 @@ input CommentUpdateInput {
   created_at: DateTime
 }
 
-input PostRelateToOneForUpdateInput {
-  create: PostCreateInput
-  connect: PostWhereUniqueInput
-  disconnect: Boolean
-}
-
 input CommentUpdateArgs {
   where: CommentWhereUniqueInput!
   data: CommentUpdateInput!
@@ -710,11 +805,6 @@ input CommentCreateInput {
   author: UserRelateToOneForCreateInput
   post: PostRelateToOneForCreateInput
   created_at: DateTime
-}
-
-input PostRelateToOneForCreateInput {
-  create: PostCreateInput
-  connect: PostWhereUniqueInput
 }
 
 """
@@ -759,6 +849,14 @@ type Query {
   ): [Difficulty!]
   difficulty(where: DifficultyWhereUniqueInput!): Difficulty
   difficultiesCount(where: DifficultyWhereInput! = {}): Int
+  meatTypes(
+    where: MeatTypeWhereInput! = {}
+    orderBy: [MeatTypeOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [MeatType!]
+  meatType(where: MeatTypeWhereUniqueInput!): MeatType
+  meatTypesCount(where: MeatTypeWhereInput! = {}): Int
   recipes(
     where: RecipeWhereInput! = {}
     orderBy: [RecipeOrderByInput!]! = []

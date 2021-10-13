@@ -37,6 +37,12 @@ export const lists = {
         ref: "Comment.author",
         many: true
       }),
+      bookmarked_post: relationship({
+        ref: "Post.bookmarked_user"
+      }),
+      bookmarked_recipe: relationship({
+        ref: "Recipe.bookmarked_user"
+      }),
       created_at: timestamp({ db: { updatedAt: true } })
     },
     ui: {
@@ -88,6 +94,10 @@ export const lists = {
       linked_recipe: relationship({
         ref: "Recipe.linked_post"
       }),
+      bookmarked_user: relationship({
+        ref: "User.bookmarked_post",
+        many: true
+      }),
       comment: relationship({
         ref: "Comment.post",
         many: true
@@ -99,6 +109,11 @@ export const lists = {
     fields: {
       label: text({ validation: { isRequired: true } }),
       numeric_level: integer({ validation: { isRequired: true } }),
+    }
+  }),
+  MeatType: list({
+    fields: {
+      label: text({ validation: { isRequired: true } })
     }
   }),
   Recipe: list({
@@ -123,7 +138,15 @@ export const lists = {
         ref: 'Post.linked_recipe',
         many: true
       }),
-      created_at: timestamp({ db: { updatedAt: true } })
+      created_at: timestamp({ db: { updatedAt: true } }),
+      "meat_type": relationship({
+        ref: "MeatType",
+      }),
+      bookmarked_user: relationship({
+        ref: "User.bookmarked_recipe",
+        many: true
+      }),
+      "steps": json()
     }
   }),
   Comment: list({

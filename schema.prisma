@@ -13,22 +13,28 @@ generator client {
 }
 
 model User {
-  id               String    @id @default(cuid())
-  name             String    @default("")
-  photo            String    @default("")
-  email            String    @unique @default("")
-  password         String
-  uploaded_posts   Post[]    @relation("Post_author")
-  uploaded_recipe  Recipe[]  @relation("Recipe_author")
-  rep_badge        Badge?    @relation("User_rep_badge", fields: [rep_badgeId], references: [id])
-  rep_badgeId      String?   @map("rep_badge")
-  badge_list       Badge[]   @relation("Badge_owner")
-  hearted_post     Post[]    @relation("Post_hearted_user_User_hearted_post")
-  hearted_recipe   Recipe[]  @relation("Recipe_hearted_user_User_hearted_recipe")
-  uploaded_comment Comment[] @relation("Comment_author")
-  created_at       DateTime? @updatedAt
+  id                  String    @id @default(cuid())
+  name                String    @default("")
+  photo               String    @default("")
+  email               String    @unique @default("")
+  password            String
+  uploaded_posts      Post[]    @relation("Post_author")
+  uploaded_recipe     Recipe[]  @relation("Recipe_author")
+  rep_badge           Badge?    @relation("User_rep_badge", fields: [rep_badgeId], references: [id])
+  rep_badgeId         String?   @map("rep_badge")
+  badge_list          Badge[]   @relation("Badge_owner")
+  hearted_post        Post[]    @relation("Post_hearted_user_User_hearted_post")
+  hearted_recipe      Recipe[]  @relation("Recipe_hearted_user_User_hearted_recipe")
+  uploaded_comment    Comment[] @relation("Comment_author")
+  bookmarked_post     Post?     @relation("User_bookmarked_post", fields: [bookmarked_postId], references: [id])
+  bookmarked_postId   String?   @map("bookmarked_post")
+  bookmarked_recipe   Recipe?   @relation("User_bookmarked_recipe", fields: [bookmarked_recipeId], references: [id])
+  bookmarked_recipeId String?   @map("bookmarked_recipe")
+  created_at          DateTime? @updatedAt
 
   @@index([rep_badgeId])
+  @@index([bookmarked_postId])
+  @@index([bookmarked_recipeId])
 }
 
 model Badge {
@@ -53,6 +59,7 @@ model Post {
   hearted_user    User[]    @relation("Post_hearted_user_User_hearted_post")
   linked_recipe   Recipe?   @relation("Post_linked_recipe", fields: [linked_recipeId], references: [id])
   linked_recipeId String?   @map("linked_recipe")
+  bookmarked_user User[]    @relation("User_bookmarked_post")
   comment         Comment[] @relation("Comment_post")
   created_at      DateTime? @updatedAt
 
@@ -67,24 +74,35 @@ model Difficulty {
   from_Recipe_difficulty Recipe[] @relation("Recipe_difficulty")
 }
 
+model MeatType {
+  id                    String   @id @default(cuid())
+  label                 String   @default("")
+  from_Recipe_meat_type Recipe[] @relation("Recipe_meat_type")
+}
+
 model Recipe {
-  id           String      @id @default(cuid())
-  thumbnail    String      @default("")
-  name         String      @default("")
-  description  String      @default("")
-  author       User?       @relation("Recipe_author", fields: [authorId], references: [id])
-  authorId     String?     @map("author")
-  duration     Int
-  difficulty   Difficulty? @relation("Recipe_difficulty", fields: [difficultyId], references: [id])
-  difficultyId String?     @map("difficulty")
-  hearted_user User[]      @relation("Recipe_hearted_user_User_hearted_recipe")
-  youtube      String      @default("")
-  ingredient   String?
-  linked_post  Post[]      @relation("Post_linked_recipe")
-  created_at   DateTime?   @updatedAt
+  id              String      @id @default(cuid())
+  thumbnail       String      @default("")
+  name            String      @default("")
+  description     String      @default("")
+  author          User?       @relation("Recipe_author", fields: [authorId], references: [id])
+  authorId        String?     @map("author")
+  duration        Int
+  difficulty      Difficulty? @relation("Recipe_difficulty", fields: [difficultyId], references: [id])
+  difficultyId    String?     @map("difficulty")
+  hearted_user    User[]      @relation("Recipe_hearted_user_User_hearted_recipe")
+  youtube         String      @default("")
+  ingredient      String?
+  linked_post     Post[]      @relation("Post_linked_recipe")
+  created_at      DateTime?   @updatedAt
+  meat_type       MeatType?   @relation("Recipe_meat_type", fields: [meat_typeId], references: [id])
+  meat_typeId     String?     @map("meat_type")
+  bookmarked_user User[]      @relation("User_bookmarked_recipe")
+  steps           String?
 
   @@index([authorId])
   @@index([difficultyId])
+  @@index([meat_typeId])
 }
 
 model Comment {
