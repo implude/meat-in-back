@@ -401,11 +401,24 @@ input UserRelateToOneForCreateInput {
 type Post {
   id: ID!
   title: String
+  photo: JSON
   content: Post_content_Document
   author: User
-  hearted_user: User
+  hearted_user(
+    where: UserWhereInput! = {}
+    orderBy: [UserOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [User!]
+  hearted_userCount(where: UserWhereInput! = {}): Int
   linked_recipe: Recipe
-  comment: Comment
+  comment(
+    where: CommentWhereInput! = {}
+    orderBy: [CommentOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Comment!]
+  commentCount(where: CommentWhereInput! = {}): Int
   created_at: DateTime
 }
 
@@ -424,10 +437,16 @@ input PostWhereInput {
   id: IDFilter
   title: StringFilter
   author: UserWhereInput
-  hearted_user: UserWhereInput
+  hearted_user: UserManyRelationFilter
   linked_recipe: RecipeWhereInput
-  comment: CommentWhereInput
+  comment: CommentManyRelationFilter
   created_at: DateTimeNullableFilter
+}
+
+input UserManyRelationFilter {
+  every: UserWhereInput
+  some: UserWhereInput
+  none: UserWhereInput
 }
 
 input PostOrderByInput {
@@ -438,23 +457,25 @@ input PostOrderByInput {
 
 input PostUpdateInput {
   title: String
+  photo: JSON
   content: JSON
   author: UserRelateToOneForUpdateInput
-  hearted_user: UserRelateToOneForUpdateInput
+  hearted_user: UserRelateToManyForUpdateInput
   linked_recipe: RecipeRelateToOneForUpdateInput
-  comment: CommentRelateToOneForUpdateInput
+  comment: CommentRelateToManyForUpdateInput
   created_at: DateTime
+}
+
+input UserRelateToManyForUpdateInput {
+  disconnect: [UserWhereUniqueInput!]
+  set: [UserWhereUniqueInput!]
+  create: [UserCreateInput!]
+  connect: [UserWhereUniqueInput!]
 }
 
 input RecipeRelateToOneForUpdateInput {
   create: RecipeCreateInput
   connect: RecipeWhereUniqueInput
-  disconnect: Boolean
-}
-
-input CommentRelateToOneForUpdateInput {
-  create: CommentCreateInput
-  connect: CommentWhereUniqueInput
   disconnect: Boolean
 }
 
@@ -465,22 +486,23 @@ input PostUpdateArgs {
 
 input PostCreateInput {
   title: String
+  photo: JSON
   content: JSON
   author: UserRelateToOneForCreateInput
-  hearted_user: UserRelateToOneForCreateInput
+  hearted_user: UserRelateToManyForCreateInput
   linked_recipe: RecipeRelateToOneForCreateInput
-  comment: CommentRelateToOneForCreateInput
+  comment: CommentRelateToManyForCreateInput
   created_at: DateTime
+}
+
+input UserRelateToManyForCreateInput {
+  create: [UserCreateInput!]
+  connect: [UserWhereUniqueInput!]
 }
 
 input RecipeRelateToOneForCreateInput {
   create: RecipeCreateInput
   connect: RecipeWhereUniqueInput
-}
-
-input CommentRelateToOneForCreateInput {
-  create: CommentCreateInput
-  connect: CommentWhereUniqueInput
 }
 
 type Difficulty {
@@ -582,12 +604,6 @@ input RecipeWhereInput {
   created_at: DateTimeNullableFilter
 }
 
-input UserManyRelationFilter {
-  every: UserWhereInput
-  some: UserWhereInput
-  none: UserWhereInput
-}
-
 input RecipeOrderByInput {
   id: OrderDirection
   thumbnail: OrderDirection
@@ -618,13 +634,6 @@ input DifficultyRelateToOneForUpdateInput {
   disconnect: Boolean
 }
 
-input UserRelateToManyForUpdateInput {
-  disconnect: [UserWhereUniqueInput!]
-  set: [UserWhereUniqueInput!]
-  create: [UserCreateInput!]
-  connect: [UserWhereUniqueInput!]
-}
-
 input RecipeUpdateArgs {
   where: RecipeWhereUniqueInput!
   data: RecipeUpdateInput!
@@ -647,11 +656,6 @@ input RecipeCreateInput {
 input DifficultyRelateToOneForCreateInput {
   create: DifficultyCreateInput
   connect: DifficultyWhereUniqueInput
-}
-
-input UserRelateToManyForCreateInput {
-  create: [UserCreateInput!]
-  connect: [UserWhereUniqueInput!]
 }
 
 type Comment {

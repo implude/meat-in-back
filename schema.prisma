@@ -23,7 +23,7 @@ model User {
   rep_badge        Badge?    @relation("User_rep_badge", fields: [rep_badgeId], references: [id])
   rep_badgeId      String?   @map("rep_badge")
   badge_list       Badge[]   @relation("Badge_owner")
-  hearted_post     Post[]    @relation("Post_hearted_user")
+  hearted_post     Post[]    @relation("Post_hearted_user_User_hearted_post")
   hearted_recipe   Recipe[]  @relation("Recipe_hearted_user_User_hearted_recipe")
   uploaded_comment Comment[] @relation("Comment_author")
   created_at       DateTime? @updatedAt
@@ -46,18 +46,17 @@ model Badge {
 model Post {
   id              String    @id @default(cuid())
   title           String    @default("")
+  photo           String?
   content         String    @default("[{\"type\":\"paragraph\",\"children\":[{\"text\":\"\"}]}]")
   author          User?     @relation("Post_author", fields: [authorId], references: [id])
   authorId        String?   @map("author")
-  hearted_user    User?     @relation("Post_hearted_user", fields: [hearted_userId], references: [id])
-  hearted_userId  String?   @map("hearted_user")
+  hearted_user    User[]    @relation("Post_hearted_user_User_hearted_post")
   linked_recipe   Recipe?   @relation("Post_linked_recipe", fields: [linked_recipeId], references: [id])
   linked_recipeId String?   @map("linked_recipe")
-  comment         Comment?  @relation("Comment_post")
+  comment         Comment[] @relation("Comment_post")
   created_at      DateTime? @updatedAt
 
   @@index([authorId])
-  @@index([hearted_userId])
   @@index([linked_recipeId])
 }
 
@@ -94,8 +93,9 @@ model Comment {
   author     User?     @relation("Comment_author", fields: [authorId], references: [id])
   authorId   String?   @map("author")
   post       Post?     @relation("Comment_post", fields: [postId], references: [id])
-  postId     String?   @unique @map("post")
+  postId     String?   @map("post")
   created_at DateTime? @updatedAt
 
   @@index([authorId])
+  @@index([postId])
 }

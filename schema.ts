@@ -57,7 +57,8 @@ export const lists = {
   }),
   Post: list({
     fields: {
-      title: text(),
+      title: text({ validation: { isRequired: true } }),
+      photo: json(),
       content: document({
         formatting: true,
         layouts: [
@@ -81,13 +82,15 @@ export const lists = {
         },
       }),
       hearted_user: relationship({
-        ref: "User.hearted_post"
+        ref: "User.hearted_post",
+        many: true
       }),
       linked_recipe: relationship({
         ref: "Recipe.linked_post"
       }),
       comment: relationship({
-        ref: "Comment.post"
+        ref: "Comment.post",
+        many: true
       }),
       created_at: timestamp({ db: { updatedAt: true } })
     },
