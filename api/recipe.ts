@@ -106,7 +106,7 @@ export const createRecipe = endpoint(async (req, res) => {
 
 export const getDifficultyLists = endpoint(async (req, res) => {
     const difficulties = await req.context.query.Difficulty.findMany({
-        query: `label numeric_level`
+        query: `label, numeric_level`
     })
 
     return res.json(difficulties)
