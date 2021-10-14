@@ -22,7 +22,6 @@ export default withAuth(
     db: {
       provider: 'sqlite',
       url: 'file:./keystone.db',
-      enableLogging: true
     },
     ui: {
       isAccessAllowed: (context) => !!context.session?.data,

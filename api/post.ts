@@ -60,7 +60,7 @@ export const getSpecificPost = async (req: Request, res: Response) => {
         return
     }
 
-    const queried = context.query.Post.findOne({
+    const queried = await context.query.Post.findOne({
         where: {
             id: req.params.id
         },
@@ -112,6 +112,6 @@ export const getSpecificPost = async (req: Request, res: Response) => {
     })
 
     // IMMEDIETELY TODO: PROCESS RESULT!
-
+    console.log(queried)
     if (queried) res.json(queried)
 }
