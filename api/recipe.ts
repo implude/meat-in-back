@@ -65,7 +65,7 @@ export const getCuratedRecipe = endpoint(async (req, res) => {
 export const getSpecificRecipe = endpoint(async (req, res) => {
     if (typeof req.params.id !== 'string') {
         throw new HTTPError({
-            message: "RECIPE_ID_NOT_CORRENT"
+            message: "RECIPE_ID_NOT_CORRECT"
         })
     }
 
@@ -79,4 +79,17 @@ export const getSpecificRecipe = endpoint(async (req, res) => {
     if (queried) res.json(queried)
 })
 
-// export const getRecipeStep = endpoint()
+export const getRecipeStep = endpoint(async (req, res) => {
+    if (typeof req.params.id !== 'string') {
+        throw new HTTPError({
+            message: "RECIPE_ID_NOT_CORRECT"
+        })
+    }
+    const queried = await req.context.query.Recipe.findOne({
+        where: {
+            id: req.params.id
+        },
+        query: "step"
+    })
+    res.json(queried)
+})

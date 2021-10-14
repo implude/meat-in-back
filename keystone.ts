@@ -14,7 +14,7 @@ import { lists } from './schema';
 // Keystone auth is configured separately - check out the basic auth setup we are importing from our auth file.
 import { withAuth, session } from './auth';
 import { createComment, createPost, getCuratedPost, getSpecificPost } from './api/post';
-import { getCuratedRecipe, getSpecificRecipe } from './api/recipe';
+import { getCuratedRecipe, getRecipeStep, getSpecificRecipe } from './api/recipe';
 
 export default withAuth(
   // Using the config function helps typescript guide you to the available options.
@@ -45,7 +45,7 @@ export default withAuth(
 
         app.get('/api/recipe/curated', getCuratedRecipe);
         app.get('/api/recipe/:id', getSpecificRecipe);
-        // app.get('/api/recipe/:id/step', getSpecificRecipe);
+        app.get('/api/recipe/:id/step', getRecipeStep);
 
         app.use((err: Error, req: Request, res: Response, next: unknown) => {
           console.error(err.stack);

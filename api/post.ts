@@ -94,7 +94,7 @@ export const getCuratedPost = endpoint(async (req, res) => {
 export const getSpecificPost = endpoint(async (req, res) => {
     if (typeof req.params.id !== 'string') {
         throw new HTTPError({
-            message: "POST_ID_NOT_CORRENT"
+            message: "POST_ID_NOT_CORRECT"
         })
     }
 
