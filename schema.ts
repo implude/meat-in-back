@@ -65,17 +65,10 @@ export const lists = {
     fields: {
       title: text({ validation: { isRequired: true } }),
       photo: json(),
-      content: document({
-        formatting: true,
-        layouts: [
-          [1, 1],
-          [1, 1, 1],
-          [2, 1],
-          [1, 2],
-          [1, 2, 1],
-        ],
-        links: true,
-        dividers: true,
+      content: text({
+        ui: {
+          displayMode: "textarea"
+        }
       }),
       author: relationship({
         ref: 'User.uploaded_posts',

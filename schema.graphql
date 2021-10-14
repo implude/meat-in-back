@@ -441,7 +441,7 @@ type Post {
   id: ID!
   title: String
   photo: JSON
-  content: Post_content_Document
+  content: String
   author: User
   hearted_user(
     where: UserWhereInput! = {}
@@ -468,10 +468,6 @@ type Post {
   created_at: DateTime
 }
 
-type Post_content_Document {
-  document(hydrateRelationships: Boolean! = false): JSON!
-}
-
 input PostWhereUniqueInput {
   id: ID
 }
@@ -482,6 +478,7 @@ input PostWhereInput {
   NOT: [PostWhereInput!]
   id: IDFilter
   title: StringFilter
+  content: StringFilter
   author: UserWhereInput
   hearted_user: UserManyRelationFilter
   linked_recipe: RecipeWhereInput
@@ -499,13 +496,14 @@ input UserManyRelationFilter {
 input PostOrderByInput {
   id: OrderDirection
   title: OrderDirection
+  content: OrderDirection
   created_at: OrderDirection
 }
 
 input PostUpdateInput {
   title: String
   photo: JSON
-  content: JSON
+  content: String
   author: UserRelateToOneForUpdateInput
   hearted_user: UserRelateToManyForUpdateInput
   linked_recipe: RecipeRelateToOneForUpdateInput
@@ -529,7 +527,7 @@ input PostUpdateArgs {
 input PostCreateInput {
   title: String
   photo: JSON
-  content: JSON
+  content: String
   author: UserRelateToOneForCreateInput
   hearted_user: UserRelateToManyForCreateInput
   linked_recipe: RecipeRelateToOneForCreateInput

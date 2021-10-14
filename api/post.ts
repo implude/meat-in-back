@@ -17,10 +17,17 @@ export const getCuratedPost = async (req: Request, res: Response) => {
             },
             comment {
                 content
+                id
+                author {
+                    id
+                    name
+                    created_at
+                }
             }
             hearted_user {
                 id
             }
+            id
             created_at
         `
     });
@@ -41,7 +48,9 @@ export const getCuratedPost = async (req: Request, res: Response) => {
 }
 
 export const getSpecificPost = async (req: Request, res: Response) => {
-    if (typeof req.query.id !== 'string') {
+    const context = (req as any).context as KeystoneContext;
+    console.log(req.params.id)
+    if (typeof req.params.id !== 'string') {
         res
             .status(400)
             .json({
@@ -51,10 +60,9 @@ export const getSpecificPost = async (req: Request, res: Response) => {
         return
     }
 
-    const context = (req as any).context as KeystoneContext;
     const queried = context.query.Post.findOne({
         where: {
-            id: req.query.id
+            id: req.params.id
         },
         query: `
             photo,

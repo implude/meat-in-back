@@ -53,7 +53,7 @@ model Post {
   id              String    @id @default(cuid())
   title           String    @default("")
   photo           String?
-  content         String    @default("[{\"type\":\"paragraph\",\"children\":[{\"text\":\"\"}]}]")
+  content         String    @default("")
   author          User?     @relation("Post_author", fields: [authorId], references: [id])
   authorId        String?   @map("author")
   hearted_user    User[]    @relation("Post_hearted_user_User_hearted_post")
