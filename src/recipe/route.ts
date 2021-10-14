@@ -1,5 +1,6 @@
-import { endpoint, HTTPError } from "../endpointTemplate";
-import { BRIEF_POST_QUERY } from "./post";
+import { Router } from "express"
+import { endpoint, HTTPError } from "../../endpointTemplate";
+import { BRIEF_POST_QUERY } from "../Post/route";
 
 const WHOLE_RECIPE_QUERY = `
 name
@@ -111,3 +112,12 @@ export const getDifficultyLists = endpoint(async (req, res) => {
 
     return res.json(difficulties)
 })
+
+const router = Router()
+router.get('/curated', getCuratedRecipe);
+router.get('/difficulty', getDifficultyLists);
+router.get('/:id', getSpecificRecipe);
+router.get('/:id/step', getRecipeStep);
+router.post('/', createRecipe);
+
+export { router as recipeRouter }

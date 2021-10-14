@@ -1,7 +1,8 @@
 import { gql } from "@keystone-next/keystone";
 import { KeystoneContext } from "@keystone-next/keystone/types";
 import { Request, Response } from 'express';
-import { checkReq, endpoint, HTTPError } from "../endpointTemplate";
+import { Router } from "express"
+import { checkReq, endpoint, HTTPError } from "../../endpointTemplate";
 
 const COMMENT_QUERY = `
 author {
@@ -146,3 +147,11 @@ export const createComment = endpoint(async (req: Request, res: Response) => {
 
     res.json(createdComment)
 })
+
+const router = Router()
+router.get('/curated', getCuratedPost);
+router.get('/:id', getSpecificPost);
+router.post('/:id/comment', createComment);
+router.post('/', createPost);
+
+export { router as postRouter }
