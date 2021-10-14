@@ -51,27 +51,29 @@ comment {
 }
 `
 
-export const getCuratedPost = endpoint(async (req, res) => {
-    const posts = await req.context.query.Post.findMany({
-        query: gql`
-            author {
+export const BRIEF_POST_QUERY = `
+author {
     name,
-        photo,
-        rep_badge {
+    photo,
+    rep_badge {
         image,
-            label,
-            description
+        label,
+        description
     }
 },
-            comment {
+comment {
     id
 }
-            hearted_user {
+hearted_user {
     id
 }
 id
 created_at
-    `
+`
+
+export const getCuratedPost = endpoint(async (req, res) => {
+    const posts = await req.context.query.Post.findMany({
+        query: BRIEF_POST_QUERY
     });
 
     res.json(
@@ -89,23 +91,21 @@ created_at
     );
 })
 
-export const getSpecificPost = async (req: Request, res: Response) => {
-    console.log("GETTING_POST")
-    const context = (req as any).context as KeystoneContext;
+export const getSpecificPost = endpoint(async (req, res) => {
     if (typeof req.params.id !== 'string') {
         throw new HTTPError({
             message: "POST_ID_NOT_CORRENT"
         })
     }
 
-    const queried = await context.query.Post.findOne({
+    const queried = await req.context.query.Post.findOne({
         where: {
             id: req.params.id
         },
         query: WHOLE_POST_QUERY
     })
     if (queried) res.json(queried)
-}
+})
 
 export const createPost = async (req: Request, res: Response) => {
     console.log("CREATING_POST")
