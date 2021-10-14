@@ -1,8 +1,17 @@
 import { gql } from "@keystone-next/keystone";
 import { KeystoneContext } from "@keystone-next/keystone/types";
-import type { Request, Response } from 'express';
+import { Request, Response } from 'express';
+import { checkReq, endpoint, HTTPError } from "../endpointTemplate";
 
-const WHOLE_POST_QUERY = gql`
+const COMMENT_QUERY = `
+author {
+    name,
+    photo,
+    id
+}
+created_at
+content`
+const WHOLE_POST_QUERY = `
 photo,
 title,
 created_at
@@ -31,52 +40,38 @@ linked_recipe {
         id
     }
 }
-comment {
-    author {
-        name,
-        photo,
-        id
-    }
-    created_at
-    content
-}
 hearted_user {
     id
 }
 bookmarked_user {
     id
 }
+comment {
+    ${COMMENT_QUERY}   
+}
 `
 
-export const getCuratedPost = async (req: Request, res: Response) => {
-    const context = (req as any).context as KeystoneContext;
-    // context.session
-    const posts = await context.query.Post.findMany({
+export const getCuratedPost = endpoint(async (req, res) => {
+    const posts = await req.context.query.Post.findMany({
         query: gql`
             author {
-                name,
-                photo,
-                rep_badge {
-                    image,
-                    label,
-                    description
-                }
-            },
+    name,
+        photo,
+        rep_badge {
+        image,
+            label,
+            description
+    }
+},
             comment {
-                content
-                id
-                author {
-                    id
-                    name
-                    created_at
-                }
-            }
+    id
+}
             hearted_user {
-                id
-            }
-            id
-            created_at
-        `
+    id
+}
+id
+created_at
+    `
     });
 
     res.json(
@@ -92,18 +87,15 @@ export const getCuratedPost = async (req: Request, res: Response) => {
             }))
             .sort(() => 0.5 - Math.random())
     );
-}
+})
 
 export const getSpecificPost = async (req: Request, res: Response) => {
+    console.log("GETTING_POST")
     const context = (req as any).context as KeystoneContext;
     if (typeof req.params.id !== 'string') {
-        res
-            .status(400)
-            .json({
-                error: "POST_ID_NOT_CORRENT"
-            })
-
-        return
+        throw new HTTPError({
+            message: "POST_ID_NOT_CORRENT"
+        })
     }
 
     const queried = await context.query.Post.findOne({
@@ -116,14 +108,38 @@ export const getSpecificPost = async (req: Request, res: Response) => {
 }
 
 export const createPost = async (req: Request, res: Response) => {
+    console.log("CREATING_POST")
     const context = (req as any).context as KeystoneContext;
-    console.log(req.query)
 
-    const createdResult = await context.query.Post.createOne({
+    const createdPost = await context.query.Post.createOne({
         // TODO: IMPLEMENT AUTHOR, EXAMPLE: NUTYWORKS
         data: { ...req.query, author: "ckuphca1e0164tl9o8xl3iqvs" },
         query: WHOLE_POST_QUERY
     })
 
-    if (createdResult.id) res.json(createdResult)
+    if (createdPost.id) res.json(createdPost)
 }
+
+
+export const createComment = endpoint(async (req: Request, res: Response) => {
+    const context = (req as any).context as KeystoneContext;
+    if (!req.params.id) throw new HTTPError({
+        message: "POST_ID_NOT_CORRECT", code: 400
+    })
+
+    checkReq(req.body, ["author"])
+
+    const createdComment = await context.query.Comment.createOne({
+        data: {
+            ...req.body,
+            post: {
+                connect: {
+                    id: req.params.id
+                }
+            }
+        },
+        query: COMMENT_QUERY
+    })
+
+    res.json(createdComment)
+})

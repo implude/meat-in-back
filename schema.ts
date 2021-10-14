@@ -146,7 +146,7 @@ export const lists = {
     fields: {
       content: text({ validation: { isRequired: true } }),
       author: relationship({
-        ref: "User.uploaded_comment"
+        ref: "User.uploaded_comment",
       }),
       post: relationship({
         ref: "Post.comment"
