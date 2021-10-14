@@ -75,7 +75,7 @@ created_at
     });
 
     res.json(
-        posts
+        [...posts
             .map(post => ({
                 ...post,
                 heart: {
@@ -84,7 +84,7 @@ created_at
                     hearted: Math.random() > 0.5
                 },
                 hearted_user: undefined
-            }))
+            }))]
             .sort(() => 0.5 - Math.random())
     );
 })
