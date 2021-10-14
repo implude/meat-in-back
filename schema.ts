@@ -68,6 +68,9 @@ export const lists = {
       content: text({
         ui: {
           displayMode: "textarea"
+        },
+        validation: {
+          isRequired: true
         }
       }),
       author: relationship({

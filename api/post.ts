@@ -107,18 +107,23 @@ export const getSpecificPost = endpoint(async (req, res) => {
     if (queried) res.json(queried)
 })
 
-export const createPost = async (req: Request, res: Response) => {
-    console.log("CREATING_POST")
+export const createPost = endpoint(async (req, res) => {
     const context = (req as any).context as KeystoneContext;
 
     const createdPost = await context.query.Post.createOne({
         // TODO: IMPLEMENT AUTHOR, EXAMPLE: NUTYWORKS
-        data: { ...req.query, author: "ckuphca1e0164tl9o8xl3iqvs" },
+        data: {
+            ...req.body, author: {
+                connect: {
+                    id: "ckuphca1e0164tl9o8xl3iqvs"
+                }
+            }
+        },
         query: WHOLE_POST_QUERY
     })
 
     if (createdPost.id) res.json(createdPost)
-}
+})
 
 
 export const createComment = endpoint(async (req: Request, res: Response) => {
@@ -126,8 +131,6 @@ export const createComment = endpoint(async (req: Request, res: Response) => {
     if (!req.params.id) throw new HTTPError({
         message: "POST_ID_NOT_CORRECT", code: 400
     })
-
-    checkReq(req.body, ["author"])
 
     const createdComment = await context.query.Comment.createOne({
         data: {

@@ -93,3 +93,21 @@ export const getRecipeStep = endpoint(async (req, res) => {
     })
     res.json(queried)
 })
+
+export const createRecipe = endpoint(async (req, res) => {
+    const createdRecipe = await req.context.query.Recipe.createOne({
+        // TODO: IMPLEMENT AUTHOR, EXAMPLE: NUTYWORKS
+        data: { ...req.body, author: { connect: { id: "ckuphca1e0164tl9o8xl3iqvs" } } },
+        query: WHOLE_RECIPE_QUERY
+    })
+
+    if (createdRecipe.id) res.json(createdRecipe)
+})
+
+export const getDifficultyLists = endpoint(async (req, res) => {
+    const difficulties = await req.context.query.Difficulty.findMany({
+        query: `label numeric_level`
+    })
+
+    return res.json(difficulties)
+})
