@@ -1,11 +1,4 @@
-node_modules
+node_modules/
 .keystone/admin
 keystone.db
 *.log
-.yarn/*
-!.yarn/cache
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
