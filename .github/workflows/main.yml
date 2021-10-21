@@ -13,5 +13,5 @@ jobs:
       - name: Build Dockerfile
         run: docker build -t "meatin:0.0.1" .
         
-      - name: Run a multi-line script
-        run: docker run -e SESSION_SECRET="${{ secrets.SESSION_SECRET }}" -p 6000:3000 meatin:0.0.1
+      - name: Run Docker
+        run: docker-compose restart meatin
