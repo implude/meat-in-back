@@ -2,7 +2,7 @@ import { gql } from "@keystone-next/keystone";
 import { KeystoneContext } from "@keystone-next/keystone/types";
 import { Request, Response } from 'express';
 import { Router } from "express"
-import { checkReq, endpoint, HTTPError } from "../../endpointTemplate";
+import { checkReq, endpoint, HTTPError, needAuth } from "../../endpointTemplate";
 
 const COMMENT_QUERY = `
 author {
@@ -73,6 +73,8 @@ created_at
 `
 
 export const getCuratedPost = endpoint(async (req, res) => {
+    const authed = needAuth(req)
+
     const posts = await req.context.query.Post.findMany({
         query: BRIEF_POST_QUERY
     });
@@ -82,9 +84,8 @@ export const getCuratedPost = endpoint(async (req, res) => {
             .map(post => ({
                 ...post,
                 heart: {
-                    // TODO: IMPLEMENT HEARTED LOGIC
                     count: post.hearted_user.length,
-                    hearted: Math.random() > 0.5
+                    hearted: post.hearted_user.includes(authed.id)
                 },
                 hearted_user: undefined
             }))]
@@ -109,14 +110,13 @@ export const getSpecificPost = endpoint(async (req, res) => {
 })
 
 export const createPost = endpoint(async (req, res) => {
-    const context = (req as any).context as KeystoneContext;
+    const authed = needAuth(req)
 
-    const createdPost = await context.query.Post.createOne({
-        // TODO: IMPLEMENT AUTHOR, EXAMPLE: NUTYWORKS
+    const createdPost = await req.context.query.Post.createOne({
         data: {
             ...req.body, author: {
                 connect: {
-                    id: "ckuphca1e0164tl9o8xl3iqvs"
+                    id: authed.id
                 }
             }
         },

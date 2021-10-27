@@ -1,5 +1,5 @@
 import { Router } from "express"
-import { endpoint, HTTPError } from "../../endpointTemplate";
+import { endpoint, HTTPError, needAuth } from "../../endpointTemplate";
 import { BRIEF_POST_QUERY } from "../Post/route";
 
 const WHOLE_RECIPE_QUERY = `
@@ -96,9 +96,10 @@ export const getRecipeStep = endpoint(async (req, res) => {
 })
 
 export const createRecipe = endpoint(async (req, res) => {
+    const authed = needAuth(req)
+
     const createdRecipe = await req.context.query.Recipe.createOne({
-        // TODO: IMPLEMENT AUTHOR, EXAMPLE: NUTYWORKS
-        data: { ...req.body, author: { connect: { id: "ckuphca1e0164tl9o8xl3iqvs" } } },
+        data: { ...req.body, author: { connect: { id: authed.id } } },
         query: WHOLE_RECIPE_QUERY
     })
 
