@@ -37,6 +37,13 @@ export const createUser = endpoint(async (req, res) => {
     })
 })
 
+export const loginWithUserNameAndPassword = endpoint(async (req, res) => {
+    const accessToken = await getTokenWithEmailAndPassword(req.body.email, req.body.password, req.context)
+    res.json({
+        accessToken
+    })
+})
+
 const router = Router()
 router.post('/', createUser)
 
