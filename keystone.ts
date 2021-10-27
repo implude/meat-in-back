@@ -4,6 +4,7 @@ import { lists } from './schema';
 import { withAuth, session } from './auth';
 import { postRouter } from './src/Post/route';
 import { recipeRouter } from './src/recipe/route';
+import { userRouter } from './src/User/route';
 
 export default withAuth(
   config({
@@ -31,6 +32,7 @@ export default withAuth(
 
         app.use('/api/post', postRouter)
         app.use('/api/recipe', recipeRouter)
+        app.use('/api/user', userRouter)
         app.use((err: Error, req: Request, res: Response, next: unknown) => {
           console.error(err.stack);
           res.status(500).send('조땠대요');
