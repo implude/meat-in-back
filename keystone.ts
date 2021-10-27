@@ -8,8 +8,11 @@ import { recipeRouter } from './src/recipe/route';
 export default withAuth(
   config({
     db: {
-      provider: 'sqlite',
-      url: 'file:./keystone.db',
+      provider: 'postgresql',
+      url: 'postgres://implude:implude@localhost:5432/keystone',
+      enableLogging: true,
+      useMigrations: true,
+      idField: { kind: 'uuid' },
     },
     ui: {
       isAccessAllowed: (context) => !!context.session?.data,
@@ -18,6 +21,7 @@ export default withAuth(
     session,
     server: {
       cors: {},
+      port: process.env.NODE_ENV === 'production' ? 3000 : 1037,
       extendExpressApp(app, createContext) {
         app.use(bodyParser())
         app.use('/api', async (req, res, next) => {
