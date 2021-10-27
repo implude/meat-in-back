@@ -12,7 +12,7 @@ import { createAuth } from '@keystone-next/auth';
 // See https://keystonejs.com/docs/apis/session#session-api for the session docs
 import { statelessSessions } from '@keystone-next/keystone/session';
 
-let sessionSecret = process.env.SESSION_SECRET;
+export let sessionSecret: string = process.env.SESSION_SECRET || "";
 
 // Here is a best practice! It's fine to not have provided a session secret in dev,
 // however it should always be there in production.

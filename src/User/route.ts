@@ -1,11 +1,17 @@
 import { KeystoneContext } from "@keystone-next/keystone/types";
 import { Router } from "express"
-import { checkReq, endpoint, HTTPError } from "../../endpointTemplate";
+import jwt from "jsonwebtoken"
+import { sessionSecret } from "../../auth";
+import { checkReq, endpoint, HTTPError, needAuth } from "../../endpointTemplate";
 
 const LOGIN_QUERY = `mutation($email: String!, $password: String!) {
     authenticateUserWithPassword(email: $email, password: $password) {
         ... on UserAuthenticationWithPasswordSuccess {
             sessionToken
+            item {
+                id
+                name
+            }
         }
     }
 }`
@@ -18,20 +24,24 @@ const getTokenWithEmailAndPassword = async (email: string, password: string, con
             password: password
         }
     })
-    console.log(authedUser)
-    return authedUser.authenticateUserWithPassword.sessionToken
+
+    const token = jwt.sign({
+        id: authedUser.authenticateUserWithPassword.item.id,
+        name: authedUser.authenticateUserWithPassword.item.name,
+    }, sessionSecret)
+
+    return token
 }
 
 export const createUser = endpoint(async (req, res) => {
     checkReq(req.body, ['name', 'photo', 'email', 'password'])
-    const createdUser = await req.context.query.User.createOne({
+    await req.context.query.User.createOne({
         data: {
             ...req.body
         }
     })
 
     const accessToken = await getTokenWithEmailAndPassword(req.body.email, req.body.password, req.context)
-    console.log(accessToken)
     res.json({
         accessToken
     })
@@ -44,7 +54,30 @@ export const loginWithUserNameAndPassword = endpoint(async (req, res) => {
     })
 })
 
+export const getMyInfo = endpoint(async (req, res) => {
+    const authed = needAuth(req)
+
+    const user = await req.context.query.User.findOne({
+        where: {
+            id: authed.id
+        },
+        query: `
+            name,
+            photo,
+            rep_badge {
+                image
+                label
+            }
+        `
+    })
+
+    console.log(user)
+    res.json(user)
+})
+
 const router = Router()
 router.post('/', createUser)
+router.post('/login', loginWithUserNameAndPassword)
+router.get('/me', getMyInfo)
 
 export { router as userRouter }
