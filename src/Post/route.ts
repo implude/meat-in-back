@@ -149,35 +149,84 @@ export const createComment = endpoint(async (req: Request, res: Response) => {
 })
 
 const heartPost = endpoint(async (req, res) => {
-    // TODO: HeartPost Implement!
     const authed = needAuth(req)
-    const fetched = await req.context.query.Post.findOne({
-        where: {
-            id: req.params.id
-        },
-        query: `
-            hearted_user {
-                id
-            }
-        `
-    })
-
     const update = await req.context.query.Post.updateOne({
         where: {
             id: req.params.id
         },
         data: {
-            hearted_user: [...fetched.hearted_user, authed.id]
+            hearted_user: {
+                connect: {
+                    id: authed.id
+                }
+            }
         }
     })
 
-    return res.json({...update, created_at: +new Date(update.created_at)})
+    return res.json(update)
+})
+
+const bookmarkPost = endpoint(async (req, res) => {
+    const authed = needAuth(req)
+    const update = await req.context.query.Post.updateOne({
+        where: {
+            id: req.params.id
+        },
+        data: {
+            bookmarked_user: {
+                connect: {
+                    id: authed.id
+                }
+            }
+        }
+    })
+
+    return res.json(update)
+})
+
+const unheartPost = endpoint(async (req, res) => {
+    const authed = needAuth(req)
+    const update = await req.context.query.Post.updateOne({
+        where: {
+            id: req.params.id
+        },
+        data: {
+            hearted_user: {
+                disconnect: {
+                    id: authed.id
+                }
+            }
+        }
+    })
+
+    return res.json(update)
+})
+
+const unbookmarkPost = endpoint(async (req, res) => {
+    const authed = needAuth(req)
+    const update = await req.context.query.Post.updateOne({
+        where: {
+            id: req.params.id
+        },
+        data: {
+            bookmarked_user: {
+                disconnect: {
+                    id: authed.id
+                }
+            }
+        }
+    })
+
+    return res.json(update)
 })
 
 const router = Router()
 router.get('/curated', getCuratedPost);
 router.get('/:id', getSpecificPost);
-router.get('/:id/heart', heartPost);
+router.post('/:id/heart', heartPost);
+router.post('/:id/bookmark', bookmarkPost);
+router.delete('/:id/unheart', unheartPost);
+router.delete('/:id/unbookmark', unbookmarkPost);
 router.post('/:id/comment', createComment);
 router.post('/', createPost);
 
