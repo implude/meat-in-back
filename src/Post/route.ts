@@ -225,8 +225,8 @@ router.get('/curated', getCuratedPost);
 router.get('/:id', getSpecificPost);
 router.post('/:id/heart', heartPost);
 router.post('/:id/bookmark', bookmarkPost);
-router.delete('/:id/unheart', unheartPost);
-router.delete('/:id/unbookmark', unbookmarkPost);
+router.delete('/:id/heart', unheartPost);
+router.delete('/:id/bookmark', unbookmarkPost);
 router.post('/:id/comment', createComment);
 router.post('/', createPost);
 

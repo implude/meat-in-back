@@ -122,9 +122,85 @@ export const getDifficultyLists = endpoint(async (req, res) => {
     return res.json(difficulties)
 })
 
+const heartRecipe = endpoint(async (req, res) => {
+    const authed = needAuth(req)
+    const update = await req.context.query.Recipe.updateOne({
+        where: {
+            id: req.params.id
+        },
+        data: {
+            hearted_user: {
+                connect: {
+                    id: authed.id
+                }
+            }
+        }
+    })
+
+    return res.json(update)
+})
+
+const bookmarkRecipe = endpoint(async (req, res) => {
+    const authed = needAuth(req)
+    const update = await req.context.query.Recipe.updateOne({
+        where: {
+            id: req.params.id
+        },
+        data: {
+            bookmarked_user: {
+                connect: {
+                    id: authed.id
+                }
+            }
+        }
+    })
+
+    return res.json(update)
+})
+
+const unheartRecipe = endpoint(async (req, res) => {
+    const authed = needAuth(req)
+    const update = await req.context.query.Recipe.updateOne({
+        where: {
+            id: req.params.id
+        },
+        data: {
+            hearted_user: {
+                disconnect: {
+                    id: authed.id
+                }
+            }
+        }
+    })
+
+    return res.json(update)
+})
+
+const unbookmarkRecipe = endpoint(async (req, res) => {
+    const authed = needAuth(req)
+    const update = await req.context.query.Recipe.updateOne({
+        where: {
+            id: req.params.id
+        },
+        data: {
+            bookmarked_user: {
+                disconnect: {
+                    id: authed.id
+                }
+            }
+        }
+    })
+
+    return res.json(update)
+})
+
 const router = Router()
 router.get('/curated', getCuratedRecipe);
 router.get('/difficulty', getDifficultyLists);
+router.post('/:id/heart', heartRecipe);
+router.post('/:id/bookmark', bookmarkRecipe);
+router.delete('/:id/heart', unheartRecipe);
+router.delete('/:id/bookmark', unbookmarkRecipe);
 router.get('/:id', getSpecificRecipe);
 router.get('/:id/step', getRecipeStep);
 router.post('/', createRecipe);
