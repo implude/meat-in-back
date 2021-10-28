@@ -31,6 +31,7 @@ linked_recipe {
     thumbnail,
     meat_type {
         label
+        id
     }
     duration
     difficulty {

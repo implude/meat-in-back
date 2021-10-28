@@ -8,6 +8,7 @@ id
 thumbnail
 meat_type {
     label
+    id
 }
 duration
 difficulty {
@@ -33,10 +34,12 @@ linked_post {
 export const getCuratedRecipe = endpoint(async (req, res) => {
     const allBriefRecipe = await req.context.query.Recipe.findMany({
         query: `
+            id
             name
             thumbnail
             meat_type {
                 label
+                id
             }
             duration
             difficulty {
