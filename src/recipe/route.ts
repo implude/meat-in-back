@@ -25,6 +25,7 @@ author {
     id
 }
 youtube
+description
 ingredient
 linked_post {
     ${BRIEF_POST_QUERY}
