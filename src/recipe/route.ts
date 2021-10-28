@@ -38,6 +38,7 @@ export const getCuratedRecipe = endpoint(async (req, res) => {
             id
             name
             thumbnail
+            description
             meat_type {
                 label
                 id
@@ -115,7 +116,7 @@ export const createRecipe = endpoint(async (req, res) => {
         query: WHOLE_RECIPE_QUERY
     })
 
-    if (createdRecipe.id) res.json(createdRecipe)
+    res.json(createdRecipe)
 })
 
 export const getDifficultyLists = endpoint(async (req, res) => {

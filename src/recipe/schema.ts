@@ -17,7 +17,7 @@ export const Recipe = list({
             ref: 'User.hearted_recipe',
             many: true
         }),
-        "youtube": text({ validation: { isRequired: true } }),
+        "youtube": text(),
         "ingredient": json(),
         "linked_post": relationship({
             ref: 'Post.linked_recipe',
