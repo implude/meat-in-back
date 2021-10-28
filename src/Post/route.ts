@@ -88,7 +88,7 @@ export const getCuratedPost = endpoint(async (req, res) => {
                     hearted: post.hearted_user.includes(authed.id)
                 },
                 hearted_user: undefined,
-                created_at: +post.create_at
+                created_at: +new Date(post.created_at)
             }))]
             .sort(() => 0.5 - Math.random())
     );
@@ -107,7 +107,7 @@ export const getSpecificPost = endpoint(async (req, res) => {
         },
         query: WHOLE_POST_QUERY
     })
-    if (queried) res.json(queried)
+    if (queried) res.json({ ...queried, created_at: +new Date(queried.created_at) })
 })
 
 export const createPost = endpoint(async (req, res) => {
@@ -124,7 +124,7 @@ export const createPost = endpoint(async (req, res) => {
         query: WHOLE_POST_QUERY
     })
 
-    if (createdPost.id) res.json(createdPost)
+    if (createdPost.id) res.json({ ...createdPost, created_at: +new Date(createdPost.created_at) })
 })
 
 export const createComment = endpoint(async (req: Request, res: Response) => {
@@ -145,7 +145,7 @@ export const createComment = endpoint(async (req: Request, res: Response) => {
         query: COMMENT_QUERY
     })
 
-    res.json(createdComment)
+    res.json({...createdComment, created_at: +new Date(createdComment.created_at)})
 })
 
 const heartPost = endpoint(async (req, res) => {
@@ -171,7 +171,7 @@ const heartPost = endpoint(async (req, res) => {
         }
     })
 
-    return res.json(update)
+    return res.json({...update, created_at: +new Date(update.created_at)})
 })
 
 const router = Router()
