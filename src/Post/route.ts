@@ -87,7 +87,8 @@ export const getCuratedPost = endpoint(async (req, res) => {
                     count: post.hearted_user.length,
                     hearted: post.hearted_user.includes(authed.id)
                 },
-                hearted_user: undefined
+                hearted_user: undefined,
+                created_at: +post.create_at
             }))]
             .sort(() => 0.5 - Math.random())
     );
@@ -126,7 +127,6 @@ export const createPost = endpoint(async (req, res) => {
     if (createdPost.id) res.json(createdPost)
 })
 
-
 export const createComment = endpoint(async (req: Request, res: Response) => {
     const context = (req as any).context as KeystoneContext;
     if (!req.params.id) throw new HTTPError({
@@ -148,9 +148,36 @@ export const createComment = endpoint(async (req: Request, res: Response) => {
     res.json(createdComment)
 })
 
+const heartPost = endpoint(async (req, res) => {
+    // TODO: HeartPost Implement!
+    const authed = needAuth(req)
+    const fetched = await req.context.query.Post.findOne({
+        where: {
+            id: req.params.id
+        },
+        query: `
+            hearted_user {
+                id
+            }
+        `
+    })
+
+    const update = await req.context.query.Post.updateOne({
+        where: {
+            id: req.params.id
+        },
+        data: {
+            hearted_user: [...fetched.hearted_user, authed.id]
+        }
+    })
+
+    return res.json(update)
+})
+
 const router = Router()
 router.get('/curated', getCuratedPost);
 router.get('/:id', getSpecificPost);
+router.get('/:id/heart', heartPost);
 router.post('/:id/comment', createComment);
 router.post('/', createPost);
 

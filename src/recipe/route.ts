@@ -4,6 +4,7 @@ import { BRIEF_POST_QUERY } from "../Post/route";
 
 const WHOLE_RECIPE_QUERY = `
 name
+id
 thumbnail
 meat_type {
     label
@@ -58,7 +59,8 @@ export const getCuratedRecipe = endpoint(async (req, res) => {
                     count: recipe.hearted_user.length,
                     hearted: Math.random() > 0.5
                 },
-                hearted_user: undefined
+                hearted_user: undefined,
+                created_at: +new Date(recipe.created_at)
             }))
     )
 })
@@ -77,7 +79,10 @@ export const getSpecificRecipe = endpoint(async (req, res) => {
         query: WHOLE_RECIPE_QUERY
     })
 
-    if (queried) res.json(queried)
+    if (queried) res.json({
+        ...queried,
+        created_at: +new Date(queried.created_at)
+    })
 })
 
 export const getRecipeStep = endpoint(async (req, res) => {
@@ -92,7 +97,10 @@ export const getRecipeStep = endpoint(async (req, res) => {
         },
         query: "step"
     })
-    res.json(queried)
+    res.json({
+        ...queried,
+        created_at: +new Date(queried.created_at)
+    })
 })
 
 export const createRecipe = endpoint(async (req, res) => {
@@ -108,7 +116,7 @@ export const createRecipe = endpoint(async (req, res) => {
 
 export const getDifficultyLists = endpoint(async (req, res) => {
     const difficulties = await req.context.query.Difficulty.findMany({
-        query: `label, numeric_level`
+        query: `label, numeric_level, id`
     })
 
     return res.json(difficulties)
