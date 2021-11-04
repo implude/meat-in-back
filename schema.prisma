@@ -117,3 +117,11 @@ model User {
   @@index([bookmarked_postId])
   @@index([bookmarked_recipeId])
 }
+
+model Ad {
+  id          String @id @default(uuid()) @postgresql.Uuid
+  image       String @default("")
+  title       String @default("")
+  description String @default("")
+  target_url  String @default("")
+}

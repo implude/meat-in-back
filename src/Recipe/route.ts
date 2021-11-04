@@ -112,7 +112,15 @@ export const createRecipe = endpoint(async (req, res) => {
     const authed = needAuth(req)
 
     const createdRecipe = await req.context.query.Recipe.createOne({
-        data: { ...req.body, author: { connect: { id: authed.id } } },
+        data: {
+            ...req.body,
+            author: { connect: { id: authed.id } },
+            difficulty: {
+                connect: {
+                    id: req.body.difficulty
+                }
+            }
+        },
         query: WHOLE_RECIPE_QUERY
     })
 

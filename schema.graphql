@@ -66,6 +66,12 @@ type Mutation {
   updateUsers(data: [UserUpdateArgs!]!): [User]
   deleteUser(where: UserWhereUniqueInput!): User
   deleteUsers(where: [UserWhereUniqueInput!]!): [User]
+  createAd(data: AdCreateInput!): Ad
+  createAds(data: [AdCreateInput!]!): [Ad]
+  updateAd(where: AdWhereUniqueInput!, data: AdUpdateInput!): Ad
+  updateAds(data: [AdUpdateArgs!]!): [Ad]
+  deleteAd(where: AdWhereUniqueInput!): Ad
+  deleteAds(where: [AdWhereUniqueInput!]!): [Ad]
   endSession: Boolean!
 }
 
@@ -812,6 +818,56 @@ input BadgeRelateToManyForCreateInput {
   connect: [BadgeWhereUniqueInput!]
 }
 
+type Ad {
+  id: ID!
+  image: String
+  title: String
+  description: String
+  target_url: String
+}
+
+input AdWhereUniqueInput {
+  id: ID
+}
+
+input AdWhereInput {
+  AND: [AdWhereInput!]
+  OR: [AdWhereInput!]
+  NOT: [AdWhereInput!]
+  id: IDFilter
+  image: StringFilter
+  title: StringFilter
+  description: StringFilter
+  target_url: StringFilter
+}
+
+input AdOrderByInput {
+  id: OrderDirection
+  image: OrderDirection
+  title: OrderDirection
+  description: OrderDirection
+  target_url: OrderDirection
+}
+
+input AdUpdateInput {
+  image: String
+  title: String
+  description: String
+  target_url: String
+}
+
+input AdUpdateArgs {
+  where: AdWhereUniqueInput!
+  data: AdUpdateInput!
+}
+
+input AdCreateInput {
+  image: String
+  title: String
+  description: String
+  target_url: String
+}
+
 """
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
@@ -878,6 +934,14 @@ type Query {
   ): [User!]
   user(where: UserWhereUniqueInput!): User
   usersCount(where: UserWhereInput! = {}): Int
+  ads(
+    where: AdWhereInput! = {}
+    orderBy: [AdOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Ad!]
+  ad(where: AdWhereUniqueInput!): Ad
+  adsCount(where: AdWhereInput! = {}): Int
   keystone: KeystoneMeta!
 }
 
