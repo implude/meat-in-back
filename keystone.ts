@@ -23,7 +23,7 @@ export default withAuth(
     session,
     server: {
       cors: {},
-      port: process.env.NODE_ENV === 'production' ? 3000 : 1037,
+      port: process.env.NODE_ENV === 'production' ? 3000 : 1338,
       extendExpressApp(app, createContext) {
         app.use(bodyParser())
         app.use('/api', async (req, res, next) => {

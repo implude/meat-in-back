@@ -1,6 +1,7 @@
 import { Router } from "express"
 import { endpoint, HTTPError, needAuth } from "../../endpointTemplate";
 import { BRIEF_POST_QUERY } from "../Post/route";
+import { img2uri } from "../utils/imgur";
 
 const WHOLE_RECIPE_QUERY = `
 name
@@ -86,6 +87,10 @@ export const getSpecificRecipe = endpoint(async (req, res) => {
 
     if (queried) res.json({
         ...queried,
+        linked_post: queried.linked_post.map((post: Record<string, string | number>) =>
+        ({
+            ...post, created_at: +new Date(post.created_at)
+        })),
         created_at: +new Date(queried.created_at)
     })
 })
@@ -100,7 +105,7 @@ export const getRecipeStep = endpoint(async (req, res) => {
         where: {
             id: req.params.id
         },
-        query: "step"
+        query: "steps"
     })
     res.json({
         ...queried,
@@ -110,6 +115,10 @@ export const getRecipeStep = endpoint(async (req, res) => {
 
 export const createRecipe = endpoint(async (req, res) => {
     const authed = needAuth(req)
+
+    if (req.body.youtube && !req.body.youtube.match(/^[a-zA-Z0-9_-]{11}$/)) throw new HTTPError({
+        message: "YOUTUBE_ID_NOT_CORRECT"
+    })
 
     const createdRecipe = await req.context.query.Recipe.createOne({
         data: {
@@ -214,8 +223,8 @@ router.post('/:id/heart', heartRecipe);
 router.post('/:id/bookmark', bookmarkRecipe);
 router.delete('/:id/heart', unheartRecipe);
 router.delete('/:id/bookmark', unbookmarkRecipe);
-router.get('/:id', getSpecificRecipe);
 router.get('/:id/step', getRecipeStep);
+router.get('/:id', getSpecificRecipe);
 router.post('/', createRecipe);
 
 export { router as recipeRouter }

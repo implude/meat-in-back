@@ -363,7 +363,7 @@ input MeatTypeCreateInput {
 type Post {
   id: ID!
   title: String
-  photo: JSON
+  photo: String
   content: String
   author: User
   hearted_user(
@@ -401,6 +401,7 @@ input PostWhereInput {
   NOT: [PostWhereInput!]
   id: IDFilter
   title: StringFilter
+  photo: StringFilter
   content: StringFilter
   author: UserWhereInput
   hearted_user: UserManyRelationFilter
@@ -425,13 +426,14 @@ input CommentManyRelationFilter {
 input PostOrderByInput {
   id: OrderDirection
   title: OrderDirection
+  photo: OrderDirection
   content: OrderDirection
   created_at: OrderDirection
 }
 
 input PostUpdateInput {
   title: String
-  photo: JSON
+  photo: String
   content: String
   author: UserRelateToOneForUpdateInput
   hearted_user: UserRelateToManyForUpdateInput
@@ -468,7 +470,7 @@ input PostUpdateArgs {
 
 input PostCreateInput {
   title: String
-  photo: JSON
+  photo: String
   content: String
   author: UserRelateToOneForCreateInput
   hearted_user: UserRelateToManyForCreateInput

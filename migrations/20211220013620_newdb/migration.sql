@@ -41,7 +41,7 @@ CREATE TABLE "MeatType" (
 CREATE TABLE "Post" (
     "id" UUID NOT NULL,
     "title" TEXT NOT NULL DEFAULT E'',
-    "photo" JSONB,
+    "photo" TEXT NOT NULL DEFAULT E'',
     "content" TEXT NOT NULL DEFAULT E'',
     "author" UUID,
     "linked_recipe" UUID,
@@ -84,6 +84,17 @@ CREATE TABLE "User" (
 );
 
 -- CreateTable
+CREATE TABLE "Ad" (
+    "id" UUID NOT NULL,
+    "image" TEXT NOT NULL DEFAULT E'',
+    "title" TEXT NOT NULL DEFAULT E'',
+    "description" TEXT NOT NULL DEFAULT E'',
+    "target_url" TEXT NOT NULL DEFAULT E'',
+
+    CONSTRAINT "Ad_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "_Post_hearted_user_User_hearted_post" (
     "A" UUID NOT NULL,
     "B" UUID NOT NULL
@@ -103,6 +114,9 @@ CREATE INDEX "Comment_author_idx" ON "Comment"("author");
 
 -- CreateIndex
 CREATE INDEX "Comment_post_idx" ON "Comment"("post");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Difficulty_numeric_level_key" ON "Difficulty"("numeric_level");
 
 -- CreateIndex
 CREATE INDEX "Post_author_idx" ON "Post"("author");

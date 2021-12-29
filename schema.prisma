@@ -53,7 +53,7 @@ model MeatType {
 model Post {
   id              String    @id @default(uuid()) @postgresql.Uuid
   title           String    @default("")
-  photo           Json?
+  photo           String    @default("")
   content         String    @default("")
   author          User?     @relation("Post_author", fields: [authorId], references: [id])
   authorId        String?   @map("author") @postgresql.Uuid
@@ -96,7 +96,7 @@ model Recipe {
 model User {
   id                  String    @id @default(uuid()) @postgresql.Uuid
   name                String    @default("")
-  photo               String    @default("")
+  photo               String    @default("https://picsum.photos/200")
   email               String    @unique @default("")
   password            String
   uploaded_posts      Post[]    @relation("Post_author")

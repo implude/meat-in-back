@@ -3,6 +3,7 @@ import { KeystoneContext } from "@keystone-next/keystone/types";
 import { Request, Response } from 'express';
 import { Router } from "express"
 import { checkReq, endpoint, HTTPError, needAuth } from "../../endpointTemplate";
+import { img2uri } from "../utils/imgur";
 
 const COMMENT_QUERY = `
 author {
@@ -27,6 +28,7 @@ author {
 }
 content,
 linked_recipe {
+    id,
     name,
     thumbnail,
     meat_type {
@@ -71,6 +73,8 @@ hearted_user {
 }
 id
 created_at
+content
+photo
 `
 
 export const getCuratedPost = endpoint(async (req, res) => {
@@ -96,6 +100,7 @@ export const getCuratedPost = endpoint(async (req, res) => {
 })
 
 export const getSpecificPost = endpoint(async (req, res) => {
+    console.log("HELP", req.params)
     if (typeof req.params.id !== 'string') {
         throw new HTTPError({
             message: "POST_ID_NOT_CORRECT"
@@ -108,7 +113,21 @@ export const getSpecificPost = endpoint(async (req, res) => {
         },
         query: WHOLE_POST_QUERY
     })
-    if (queried) res.json({ ...queried, created_at: +new Date(queried.created_at) })
+
+    console.log(queried)
+
+    if (queried) res.json({
+        ...queried,
+        created_at: +new Date(queried.created_at),
+        linked_recipe: {
+            ...queried.linked_recipe,
+            created_at: +new Date(queried.linked_recipe?.created_at),
+        },
+        comment: queried.comment.map((comment: Record<string, string | number>) => ({
+            ...comment,
+            created_at: +new Date(comment.created_at)
+        }))
+    })
 })
 
 export const createPost = endpoint(async (req, res) => {
@@ -120,7 +139,8 @@ export const createPost = endpoint(async (req, res) => {
                 connect: {
                     id: authed.id
                 }
-            }
+            },
+            photo: img2uri(req.body.photo)
         },
         query: WHOLE_POST_QUERY
     })
@@ -146,7 +166,10 @@ export const createComment = endpoint(async (req: Request, res: Response) => {
         query: COMMENT_QUERY
     })
 
-    res.json({...createdComment, created_at: +new Date(createdComment.created_at)})
+    res.json(createdComment.comment.map((comment: Comment & { created_at: string }) => ({
+        ...comment,
+        created_at: +new Date(comment.created_at)
+    })))
 })
 
 const heartPost = endpoint(async (req, res) => {

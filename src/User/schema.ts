@@ -4,7 +4,10 @@ import { text, password, relationship, timestamp } from "@keystone-next/keystone
 export const User = list({
     fields: {
         name: text({ validation: { isRequired: true } }),
-        photo: text({ validation: { isRequired: true } }),
+        photo: text({
+            // validation: { isRequired: true },
+            defaultValue: "https://picsum.photos/200"
+        }),
         email: text({
             validation: { isRequired: true },
             isIndexed: 'unique',

@@ -4,7 +4,7 @@ import { text, json, relationship, timestamp } from "@keystone-next/keystone/fie
 export const Post = list({
     fields: {
         title: text({ validation: { isRequired: true } }),
-        photo: json(),
+        photo: text(),
         content: text({
             ui: {
                 displayMode: "textarea"
